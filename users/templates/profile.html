@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% block head%}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/static/stylesheets/style-profile.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+<style>
+  #right-pane{
+      width: 25%;
+      padding: 8px 1.5%;
+  }
+
+  @media (min-width: 992px){
+      #content{
+          width: 75%;
+      }
+  }
+
+  @media (min-width: 1336px){
+      #right-pane{
+          width: calc(0.25 * (100% - 325px));
+          padding-left: 0;
+      }
+  }
+</style>
+{% endblock%}
+
+{% block content %}
+<div>
+  <div class="h-52 w-full bg-custom mt-6 grid grid-rows-1 items-stretch grid-flow-col relative">
+    <img src="/static/img/profile-page-bg.jpeg" class="w-full h-full object-cover" alt="">
+    <div class="col justify-self-end mt-5 hidden">
+      <button class="bg-white rounded  h-9 w-36"><img src="/static/img/upload.svg" alt="" class="w-9 h-5 inline"><span
+          class="mr-3">Share Profile</span></button>
+      <button class="bg-white rounded mr-1.5  h-9 w-9 justify-self-end"><img src="/static/img/dots-vertical.svg" alt=""
+          class="w-9 h-5"></button>
+    </div>
+  </div>
+  <div class="bg-white px-5 sm:px-8 pb-10 mb-5" style="min-height: 200px;">
+    <div class="flex flex-wrap relative">
+
+      <div class="flex flex-col items-center">
+        <div class="h-32 w-32 -mt-14 bg-white z-10 rounded-full flex-shrink-0 relative overflow-hidden border-8 border-white border-solid">
+          <img src="{{curr_user.profile_img_url}}" class="user-profile-img object-cover rounded-full  h-full w-full">
+          {% if curr_user.user == user %}
+          <div id="profile-img-upload-progress" class="absolute w-0 h-full opacity-50 bg-black top-0 right-0"></div>
+          <div id="change-profile-img" class="flex flex-col items-center justify-center bg-black opacity-0 hover:opacity-50 absolute top-0 left-0 w-full h-full cursor-pointer">
+            <img src="/static/img/camera.svg" class="h-6 w-6" alt="">
+            <p class="-mt-1 text-gray-400 text-sm">Change</p>
+          </div>
+          <form>
+            {%csrf_token%}
+            <input type="file" accept="image/*" name="image" id="profile-img-inp">
+          </form>
+          {% endif %}
+        </div>
+        {% if curr_user.user == user %}
+        <p id="profile-img-change-status" class="text-gray-500 text-xs font-light text-center">Click to Change</p>
+        {% endif %}
+      </div>
+
+      <div class="flex-grow flex justify-between items-stretch pt-5 flex-wrap">
+        
+        <div class="ml-5">
+          <p class="font-medium text-xl">{{curr_user.name}}</p>
+          <div class="flex mt-2">
+            <img src="/static/img/iitg.svg" class="h-8 w-8 object-contain">
+            <div class="mt-0.5 ml-2">
+              <p class="text-sm leading-4" id="account--branch">{{curr_user.branch}}</p>
+              <p class="text-gray-400 text-xs">
+                <span id="account--start_year">{{curr_user.start_year}}</span>-<span id="account--graduation_year">{{curr_user.graduation_year}}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col justify-between items-center">
+       
+          <div class="flex items-center ml-6 mt-3 sm:ml-0 sm:mt-0">
+            <img src="/static/img/work-icon.svg" class="w-6 h-6 sm:w-4 sm:h-4 mr-2">         
+            <p class="text-sm ml-1 sm:ml-0">
+              <span id="account--designation">{{curr_user.designation.title}}</span> | <span id="account--organization">{{curr_user.organization.name}}</span>
+            </p>
+          </div>
+         
+          {% if not curr_user in user.account.following and curr_user != user.account %}
+          <div class="bg-accent px-7 py-1 text-white rounded cursor-pointer absolute sm:static top-3 right-0">Follow</div>
+          {% elif curr_user == user.account %}
+          <div data-type="account" class="update-entry bg-accent px-7 py-1 text-white rounded cursor-pointer absolute sm:static top-3 right-0" >Edit Profile</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+    
+    <div class="mt-10">
+      <p class="text-xl font-medium">About</p>
+      <p class="font-light mt-3" id="account--description">{{curr_user.description}}</p>
+    </div>
+
+  </div>
+
+
+  {% if curr_user.user == user or experiences|length %}
+  <div class="w-full rounded bg-white  my-5 py-8 px-4">
+    <div class="flex items-center">
+      <h2 class="text-xl ml-4 font-medium">Experience</h2>
+      {% if curr_user.user == user%}
+      <img class="new-entry h-6 ml-3 cursor-pointer" src="/static/img/add.svg" data-type="exp" alt="+">
+      {% endif %}
+    </div>
+    {% for exp in experiences%}
+    <div class="flex px-2 sm:px-10 mt-8">
+      <img src="/static/img/company.svg" class="h-14 w-14 rounded-full flex-shrink-0">
+      <div class="flex-grow ml-4">
+        <div class="flex justify-between items-center">
+          <p class="font-medium text-lg" id="exp-{{exp.id}}-experience">{{exp.experience}}</p>
+          {% if user == curr_user.user %}
+          <div class="flex">
+            <button class="delete-entry mx-3" data-url="{% url 'experience' 'delete' %}" data-id="{{ exp.id }}">
+              <i style="font-size:18px" class="fa fa-trash-o"></i>
+            </button>
+            <button class="update-entry" data-id="{{ exp.id }}" data-type="exp">
+              <i style="font-size:18px" class="fa fa-pencil"></i>
+            </button>
+          </div>
+          {% endif %}
+        </div>
+        <p class="" id="exp-{{exp.id}}-organization">{{exp.organization.name}}</p>
+        <div hidden id="exp-{{exp.id}}-start_date">{{exp.start_date|date:'Y-m-d'}}</div>
+        <div hidden id="exp-{{exp.id}}-end_date">{{exp.end_date|date:'Y-m-d'}}</div>
+        <p class="text-gray-400">{{exp.get_start_date}} - {{exp.get_end_date}}</p>
+        <p id="exp-{{exp.id}}-organization">{{exp.description}}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if curr_user.user == user or jobs|length %}
+  <div class="w-full rounded bg-white  my-5 py-8 px-4">
+    <div class="flex items-center">
+      <h2 class="text-xl ml-4 font-medium">Jobs</h2>
+      {% if curr_user.user == user%}
+      <img class="new-entry h-6 ml-3 cursor-pointer" src="/static/img/add.svg" data-type="job">
+      {% endif %}
+    </div>
+    {% for job in jobs%}
+    <div class="flex px-2 sm:px-10 mt-8">
+      <img src="/static/img/company.svg" class="h-14 w-14 rounded-full flex-shrink-0">
+      <div class="flex-grow ml-4">
+        <div class="flex justify-between items-center">
+          <p class="font-medium text-lg" id="job-{{job.id}}-designation">{{job.designation.title}}</p>
+          {% if user == curr_user.user %}
+          <div class="flex">
+            <button class="delete-entry mx-3" data-url="{% url 'job' 'delete' %}" data-id="{{ job.id }}">
+              <i style="font-size:18px" class="fa fa-trash-o"></i>
+            </button>
+            <button class="update-entry" data-id="{{ job.id }}" data-type="job">
+              <i style="font-size:18px" class="fa fa-pencil"></i>
+            </button>
+          </div>
+          {% endif %}
+        </div>
+        <p class="" id="job-{{job.id}}-organization">{{job.organization.name}}</p>
+        <div hidden id="job-{{job.id}}-start_date">{{job.start_date|date:'Y-m-d'}}</div>
+        <div hidden id="job-{{job.id}}-end_date">{{job.end_date|date:'Y-m-d'}}</div>
+        <p class="text-gray-400">{{job.get_start_date}} - {{job.get_end_date}}</p>
+        <p id="job-{{job.id}}-description">{{job.description}}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+  {% if curr_user.user == user or projects|length %}
+  <div class="w-full rounded bg-white  my-5 py-8 px-4">
+    <div class="flex items-center">
+      <h2 class="text-xl ml-4 font-medium">Projects</h2>
+      {% if curr_user.user == user%}
+      <img class="new-entry h-6 ml-3 cursor-pointer" src="/static/img/add.svg" alt="+" data-type="project">
+      {% endif %}
+    </div>
+    {% for project in projects%}
+    <div class="flex px-2 sm:px-10 mt-8">
+      <img src="/static/img/company.svg" class="h-14 w-14 rounded-full flex-shrink-0">
+      <div class="flex-grow ml-4">
+        <div class="flex justify-between items-center">
+          <p class="font-medium text-lg" id="project-{{project.id}}-project">{{project.project}}</p>
+          {% if user == curr_user.user %}
+          <div class="flex">
+            <button class="delete-entry mx-3" data-url="{% url 'project' 'delete' %}" data-id="{{ project.id }}">
+              <i style="font-size:18px" class="fa fa-trash-o"></i>
+            </button>
+            <button class="update-entry" data-id="{{ project.id }}" data-type="project"">
+              <i style="font-size:18px" class="fa fa-pencil"></i>
+            </button>
+          </div>
+          {% endif %}
+        </div>
+        <div hidden id="project-{{project.id}}-start_date">{{project.start_date|date:'Y-m-d'}}</div>
+        <div hidden id="project-{{project.id}}-end_date">{{project.end_date|date:'Y-m-d'}}</div>
+        <p class="text-gray-400">{{project.get_start_date}} - {{project.get_end_date}}</p>
+        <p id="project-{{project.id}}-description">{{project.description}}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+  {% if curr_user.user == user or educations|length %}
+  <div class="w-full rounded bg-white  my-5 py-8 px-4">
+    <div class="flex items-center">
+      <h2 class="text-xl ml-4 font-medium">Education</h2>
+      {% if curr_user.user == user%}
+      <img class="new-entry h-6 ml-3 cursor-pointer" src="/static/img/add.svg" alt="+" data-type="edu">
+      {% endif %}
+    </div>
+    {% for edu in educations%}
+    <div class="flex px-2 sm:px-10 mt-8">
+      <img src="/static/img/company.svg" class="h-14 w-14 rounded-full flex-shrink-0">
+      <div class="flex-grow ml-4">
+        <div class="flex justify-between items-center">
+          <p class="font-medium text-lg" id="edu-{{edu.id}}-education">{{edu.education}}</p>
+          {% if user == curr_user.user %}
+          <div class="flex">
+            <button class="delete-entry mx-3" data-url="{% url 'education' 'delete' %}" data-id="{{ edu.id }}">
+              <i style="font-size:18px" class="fa fa-trash-o"></i>
+            </button>
+            <button class="update-entry" data-id="{{ edu.id }}" data-type="edu"">
+              <i style="font-size:18px" class="fa fa-pencil"></i>
+            </button>
+          </div>
+          {% endif %}
+        </div>
+        <p class="" id="edu-{{edu.id}}-institue">{{job.institute.name}}</p>
+        <div hidden id="edu-{{edu.id}}-start_date">{{edu.start_date|date:'Y-m-d'}}</div>
+        <div hidden id="edu-{{edu.id}}-end_date">{{edu.end_date|date:'Y-m-d'}}</div>
+        <p class="text-gray-400">{{edu.get_start_date}} - {{edu.get_end_date}}</p>
+        <p id="edu-{{edu.id}}-description">{{edu.description}}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  
+  <!--Faq-->
+  <!-- <div class=" bg-white pt-5 pr-5 pb-5 mt-5 mb-10">
+
+    <div class="text-lg h-11  font-medium pl-5">
+      <span>Questions Answered</span>
+    </div>
+  
+    <div class="text-lg ">
+      <div class="text-sm font-medium mb-3 pl-5">
+        {% lorem 1 %}
+      </div>
+      <div class="text-sm grid grid-cols-12">
+        <div class="col-span-1 pl-5"><img src="/static/img/Photo.png" class="rounded-full inline h-8"></div>
+        <div class="col-span-11">{% lorem 1 %}</div>
+      </div>
+    </div>
+
+  </div> -->
+</div>
+<input type="text" readonly hidden id="csrf-token" value="{{csrf_token}}">
+{% endblock %}
+
+{% block overlay %}
+{% include 'profile_forms.html' %}
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/scripts/profile.js"></script>
+{% endblock %}

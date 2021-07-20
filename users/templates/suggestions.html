@@ -1,0 +1,52 @@
+<div class="suggestions rounded w-full bg-white py-4 px-5 shadow-lg my-10">
+    <div class="flex items-center mb-3">
+        <svg width="14" height="16" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.66659 3.66667C8.66659 5.13943 7.47268 6.33333 5.99992 6.33333C4.52716 6.33333 3.33325 5.13943 3.33325 3.66667C3.33325 2.19391 4.52716 1 5.99992 1C7.47268 1 8.66659 2.19391 8.66659 3.66667Z" stroke="#111827" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5.99992 8.33333C3.42259 8.33333 1.33325 10.4227 1.33325 13H10.6666C10.6666 10.4227 8.57725 8.33333 5.99992 8.33333Z" stroke="#111827" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="text-md font-medium ml-2">Suggestions</p>
+    </div>
+    <div class="sugg-wrapper">
+        
+    </div>
+</div>
+
+<template id="sugg-temp">
+    <div class="flex justify-between items-center py-3">
+        <div class="flex items-center justify-start">
+            <img src="" class= "sugg-img rounded-full h-10 w-10 object-cover flex-shrink-0" alt="">
+            <div class="mx-3">
+                <p class="sugg-title mt-1 leading-4"></p>
+                <p class="sugg-subtitle text-xs text-gray-400 mt-1"></p>
+            </div>
+        </div>
+        <div>
+            <button class="follow-button bg-accent py-1 px-4 text-white text-xs rounded" data-user="">Follow</button>
+        </div>
+    </div>
+</template>
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url:'/get-suggestions/',
+            dataType:'json',
+            success: (data)=>{
+                if(!data.length){
+                    $('.suggestions').addClass('hidden');
+                }
+                data.forEach(ele => {
+                    const tmp = $('#sugg-temp')[0];
+                    const p = tmp.content.cloneNode(true);
+                    $('.sugg-img',p).attr('src',ele.img);
+                    $('.sugg-title',p).text(ele.title);
+                    $('.sugg-subtitle',p).text(ele.subtitle);
+                    $('.follow-button',p).attr('data-user',ele.username);
+                    $('.sugg-wrapper').append(p);
+                });
+            }
+        })
+    });
+</script>
+{% endblock %}

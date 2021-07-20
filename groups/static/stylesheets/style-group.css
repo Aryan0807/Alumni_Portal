@@ -1,0 +1,23 @@
+#right-pane{
+    width: 27%;
+    padding: 8px 1.5%;
+}
+
+@media (min-width: 992px){
+    #content{
+        width: 73%;
+    }
+}
+
+@media (min-width: 1336px){
+    #right-pane{
+        width: calc(0.27 * (100% - 325px));
+        padding-left: 0;
+    }
+}
+
+
+.group-tab-active{
+    border-bottom: 4px solid #F46B6B;
+    margin-top: 4px;
+}

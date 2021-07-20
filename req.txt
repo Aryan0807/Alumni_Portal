@@ -1,0 +1,11 @@
+django==3.1.7
+channels
+channels_redis
+djangorestframework
+pyaml
+requests
+msal
+requests-oauthlib
+Pillow
+fuzzywuzzy==0.18.0
+python-Levenshtein

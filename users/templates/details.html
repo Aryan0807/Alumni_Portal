@@ -1,0 +1,361 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="{% static 'stylesheets/style-base.css' %}">
+  <title>Details</title>
+  <style>
+    .font-accent{
+    color:#00000080;
+    }
+    .green{
+        color:#00D100;
+    }
+    .btn{
+        color:white;
+        background:blue;
+    }
+  </style>
+</head>
+<body>
+<div class="flex justify-center  mt-8 ">
+    <div>
+    <img class="h-48 w-48" src="{% static 'img/logo.svg' %}" alt="">
+    </div>
+</div>
+<div class="flex justify-between mt-9 mx-9 sm:mx-16">
+    <div class="text-2xl text-blue-700 pt-1.5">Enter details</div>
+    <div>
+    <input id="pro" type="button" value="Next" onclick="secondStep()" class="bg-accent w-28 text-white rounded-md py-1 px-0.5  lg:mr-32"/>
+    <input id="job" type="button" value="Next" onclick="nextStep()" class="hidden bg-accent w-28 text-white rounded-md py-1 px-0.5  lg:mr-32"/>
+    <input id="exp" type="button" value="Finish" onclick="finish()" class="hidden bg-accent w-28 text-white rounded-md py-1 px-0.5  lg:mr-32"/>
+    </div>
+</div>
+<hr  class="mx-9 sm:mx-16 mt-4">
+<div id="step0">
+    <div  class="mx-9 sm:ml-16 mr-16 lg:mr-64  mt-3">
+        <div class="text-xl">Profile Information</div>
+        <form id="profile" class="flex justify-start grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4"  enctype="multipart/form-data">
+            {% csrf_token%}
+            {{ pro_form.non_field_errors }}
+            <div class="col mr-5 mt-2">
+                {{ pro_form.branch.errors }}
+                <label class="text-gray-400" for="{{ pro_form.branch.id_for_label }}">Branch</label><br>
+                {{pro_form.branch}}
+            </div>
+            <br class="sm:hidden">
+            <div class="col mr-5 mt-2">
+                {{pro_form.graduation_year.errors }}
+                <label class="text-gray-400" for="{{ pro_form.graduation_year.id_for_label }}">Graduation Year</label><br>
+                {{pro_form.graduation_year}}
+            </div><br class="sm:hidden">
+            <div class="col mr-5 mt-2">
+                {{ pro_form.profile_img.errors }}
+                <label class="text-gray-400" for="{{ pro_form.profile_img.id_for_label }}">Profile image</label><br>
+                {{pro_form.profile_img}}
+            </div>
+            <div class="col mr-5 mt-2 col-span-2">
+                {{ pro_form.description.errors }}
+                <label class="text-gray-400" for="{{ pro_form.description.id_for_label }}">Description</label><br>
+                {{pro_form.description}}
+            </div>
+            <div class="col">
+                <button type="submit" name="submit" value="submit" class="bg-accent w-28 text-white rounded-md py-1 px-0.5 mt-7">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="step1" class="overflow-hidden hidden">
+<!--current Job-->
+    <div  class="mx-9 sm:ml-16 mr-16 lg:mr-64  mt-3">
+        <div class="text-xl">Current Job</div>
+        <form id="form1" class="flex justify-start grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4"  enctype="multipart/form-data">
+            {% csrf_token%}
+            {{ j_form.non_field_errors }}
+            <div class="col mr-5 mt-2">
+                {{ j_form.designation.errors }}
+                <label class="text-gray-400" for="{{ j_form.designation.id_for_label }}">Role</label><br>
+                {{j_form.designation}}
+            </div>
+            <br class="sm:hidden">
+            <div class="col mr-5 mt-2">
+                {{ j_form.organization.errors }}
+                <label class="text-gray-400" for="{{ j_form.organization.id_for_label }}">Organization</label><br>
+                {{j_form.organization}}
+            </div><br class="sm:hidden">
+            <div class="col mr-5 mt-2">
+                {{ j_form.start_date.errors }}
+                <label class="text-gray-400" for="{{ j_form.start_date.id_for_label }}">Start Date</label><br>
+                {{j_form.start_date}}
+            </div>
+            <div class="col mr-5 mt-2 col-span-2">
+                {{ j_form.description.errors }}
+                <label class="text-gray-400" for="{{ j_form.description.id_for_label }}">Description</label><br>
+                {{j_form.description}}
+            </div>
+            <div class="col">
+                <button type="submit" name="submit" value="submit" class="bg-accent w-28 text-white rounded-md py-1 px-0.5 mt-7">Add</button>
+            </div>
+        </form>
+    </div>
+    <div  class="mx-9 sm:ml-16 mr-16 lg:mr-64 mt-6">
+        <span class="text-xl">Past Jobs</span>
+        <form id="current" class="flex justify-start grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4">
+            {% csrf_token%}
+            {{ j_form.non_field_errors }}
+            <div class="mr-5 mt-2">
+                {{ j_form.designation.errors }}
+                <label class="text-gray-400" for="{{ j_form.designation.id_for_label }}">Role</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{j_form.designation}}
+            </div> <br class="sm:hidden">
+            <div class="mr-5 mt-2">
+                {{ j_form.organization.errors }}
+                <label class="text-gray-400" for="{{ j_form.organization.id_for_label }}">Organization</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{j_form.organization}}
+            </div><br class="sm:hidden">
+            <div class="mr-5 mt-2">
+                {{ j_form.start_date.errors }}
+                <label class="text-gray-400" for="{{ j_form.start_date.id_for_label }}">Start Date</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{j_form.start_date}}
+            </div><br class="sm:hidden">
+            <div class="mr-5 mt-2">
+                {{ j_form.end_date.errors }}
+                <label class="text-gray-400" for="{{ j_form.end_date.id_for_label }}">End Date</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{j_form.end_date}}
+            </div>
+            <div class="mr-5 mt-2 col-span-2">
+                {{ j_form.description.errors }}
+                <label class="text-gray-400" for="{{ j_form.description.id_for_label }}">Description</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{j_form.description}}
+            </div>
+            <div class="col"><button type="submit" name="submit" value="submit" class="bg-accent w-28 text-white rounded-md py-1 px-0.5 mt-7">Add</button></div>
+        </form>
+    </div>
+</div>
+<div id="step2"class="hidden">
+    <div  class="mx-9 sm:ml-16 mr-16 lg:mr-64  mt-3">
+            <div class="text-xl font-accent">Club</div>
+            <form id="club" method="POST" action="{% url 'experience' 'add' %}" class="flex justify-start grid sm:grid-cols-3 xl:grid-cols-4">
+                {% csrf_token%}
+                {{ e_form.non_field_errors }}
+                <div class="mr-5 mt-2">
+                    {{ e_form.experience.errors }}
+                    <label class="text-gray-400" for="{{  e_form.experience.id_for_label }}">Role</label><br>
+                    {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                    {{e_form.experience}}
+                </div>
+                <div class="mr-5 mt-2">
+                    {{ e_form.start_date.errors }}
+                    <label class="text-gray-400" for="{{ e_form.start_date.id_for_label }}">Start Date</label><br>
+                    {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                    {{e_form.start_date}}
+                </div>
+                <div class="mr-5 mt-2">
+                    {{ e_form.end_date.errors }}
+                    <label class="text-gray-400" for="{{ e_form.end_date.id_for_label }}">Start Date</label><br>
+                    {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                    {{e_form.end_date}}
+                </div>
+                <div class="col"><button type="submit" name="submit" value="submit" class="bg-accent w-28 text-white rounded-md py-1 px-0.5 mt-9">Add</button></div>
+            </form>
+    </div>
+    <div  class="mx-9 sm:ml-16 mr-16 lg:mr-64  mt-3">
+        <div class="text-xl font-accent">Fest</div>
+        <form id="fest" method="POST" action="{% url 'experience' 'add' %}" class="flex justify-start grid sm:grid-cols-3 xl:grid-cols-4">
+            {% csrf_token%}
+            {{ e_form.non_field_errors }}
+            <div class="mr-5 mt-2">
+                {{ e_form.experience.errors }}
+                <label class="text-gray-400" for="{{  e_form.experience.id_for_label }}">Role</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{e_form.experience}}
+            </div>
+            <div class="mr-5 mt-2">
+                {{ e_form.start_date.errors }}
+                <label class="text-gray-400" for="{{ e_form.start_date.id_for_label }}">Start Date</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{e_form.start_date}}
+            </div>
+            <div class="mr-5 mt-2">
+                {{ e_form.end_date.errors }}
+                <label class="text-gray-400" for="{{ e_form.end_date.id_for_label }}">Start Date</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{e_form.end_date}}
+            </div>
+            <div class="col"><button type="submit" name="submit" value="submit" class="bg-accent w-28 text-white rounded-md py-1 px-0.5 mt-9">Add</button></div>
+        </form>
+    </div>
+    <div  class="mx-9 sm:ml-16 mr-16 lg:mr-64  mt-3">
+        <div class="text-xl font-accent">Gymkhana</div>
+        <form id="gymkhana" class="flex justify-start grid sm:grid-cols-3 xl:grid-cols-4">
+            {% csrf_token%}
+            {{ e_form.non_field_errors }}
+            <div class="mr-5 mt-2">
+                {{ e_form.experience.errors }}
+                <label class="text-gray-400" for="{{  e_form.experience.id_for_label }}">Role</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{e_form.experience}}
+            </div>
+            <div class="mr-5 mt-2">
+                {{ e_form.start_date.errors }}
+                <label class="text-gray-400" for="{{ e_form.start_date.id_for_label }}">Start Date</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{e_form.start_date}}
+            </div>
+            <div class="mr-5 mt-2">
+                {{ e_form.end_date.errors }}
+                <label class="text-gray-400" for="{{ e_form.end_date.id_for_label }}">Start Date</label><br>
+                {% comment %} <input class="w-64 sm:w-full bg-accent-faded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" type="text" > {% endcomment %}
+                {{e_form.end_date}}
+            </div>
+            <div class="col"><button type="submit" name="submit" value="submit" class="bg-accent w-28 text-white rounded-md py-1 px-0.5 mt-9">Add</button></div>
+        </form>
+    </div>
+</div>
+<div class="mt-44 bg-footer h-72 flex items-end justify-between pb-10 px-20">
+      <div class="flex flex-col items-center">
+        <img class="h-24 w-24" src="{% static 'img/alumni-portal-logo.svg' %}" alt="">
+        <p class="text-white opacity-80 text-2xl mt-4">Alumni Portal</p>
+        <p class="text-white opacity-50 text-lg">IIT Guwahati</p>
+      </div >
+      
+      <div class="flex items-center justify-between w-96">
+        <svg width="60" height="60" viewBox="0 0 35 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.16257 0H15.9061L8.79687 12.2355L10.8622 16.1841L20.3355 0H27.826L35 12.4L27.7436 25H18.9861L26.229 12.5234L24.0395 8.84902L14.5384 25H7.17172L0 12.2344L7.16257 0Z" fill="white" fill-opacity="0.7"/>
+        </svg>
+        <p class="text-white opacity-50 text-xl"> Maintained by SWC</p>
+        <p class="text-white opacity-50 text-xl"> |</p>
+        <p class="text-white opacity-50 text-xl"> 2021</p>
+      </div>
+
+      <div class="flex justify-between w-60">
+        <div class="w-12 h-11 bg-white opacity-30 rounded-md"></div>
+        <div class="w-12 h-11 bg-white opacity-30 rounded-md"></div>
+        <div class="w-12 h-11 bg-white opacity-30 rounded-md"></div>
+      </div>
+</div>
+<script>
+var x=2;
+nextStep = function(){
+    $('#exp').toggleClass('hidden');
+    $('#job').toggleClass('hidden');
+    $('#step1').toggleClass('hidden');
+    $('#step2').toggleClass('hidden');
+}
+secondStep = function(){
+    $('#pro').toggleClass('hidden');
+    $('#exp').toggleClass('hidden');
+    $('#step0').toggleClass('hidden');
+    $('#step1').toggleClass('hidden');
+}
+$("#profile").on('submit',function(e){
+    e.preventDefault();
+    var frm = $('#profile');
+
+    $.ajax({
+        type:'POST',
+        url:"{% url 'update-profile'%}",
+        data:frm.serialize(),
+        success:function(response){
+        $('#profile')[0].reset();
+        alert('You profile has been created')
+        secondStep()
+        },
+        error:function(response){
+            alert('could not submit')
+            alert(response["responseJSON"]["error"]);
+        }
+    })
+})
+$('#form1').on('submit', function(e){
+e.preventDefault();
+$.ajax({
+        type : "POST", 
+        url: "{% url 'job' 'add' %}",
+        data: {
+        designation: $('#id_designation').val(),
+        organization: $('#id_organization').val(),
+        description: $("[id='id_description']:eq(1)").val(),
+        start_date: $('#id_start_date').val(),
+        end_date: $('#id_end_date').val(),
+        csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+        
+        dataType: "json",
+        },
+        cache: false,
+        success: function(data){
+        $('#form1')[0].reset();
+        alert("submission success") /* response message */
+        },
+        failure: function() {
+            alert("submission failed")
+        }
+    });
+});    
+$('#current').on('submit', function(e){
+e.preventDefault();
+$.ajax({
+        type : "POST", 
+        url: "{% url 'job' 'add' %}",
+        data: {
+        designation: $("[id='id_designation']:eq(1)").val(),
+        organization: $("[id='id_organization']:eq(1)").val(),
+        description: $("[id='id_description']:eq(2)").val(),
+        start_date: $("[id='id_start_date']:eq(1)").val(),
+        end_date: $("[id='id_end_date']:eq(1)").val(),
+        csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+        
+        dataType: "json",
+        },
+        cache: false,
+        success: function(data){
+        $('#current')[0].reset();
+        alert("submission success")
+        },
+        failure: function() {
+            alert("submission failed")
+        }
+    });
+});    
+
+function finish(){
+    window.location.replace("http://localhost:8000/");
+}
+function submitform(e,formid){
+    e.preventDefault();
+    var frm = $(formid);
+
+    $.ajax({
+        type:'POST',
+        url:"{% url 'experience' 'add'%}",
+        data:frm.serialize(),
+        success:function(response){
+        $(formid)[0].reset();
+        alert('You Experience has been added')
+        },
+        error:function(response){
+            alert(response["responseJSON"]["error"]);
+        }
+    })
+}
+
+$('#gymkhana').on('submit',(e)=>{submitform(e,'#gymkhana')})
+$('#fest').on('submit',(e)=>{submitform(e,'#fest')})
+$('#club').on('submit',(e)=>{submitform(e,'#club')})
+/*$('#fest').submit((e)=>{submitform(e,"#fest")});
+$('#club').submit((e)=>{submitform(e,"#club")});
+    console.log("submited");*/
+</script>
+</body>
+</html>
+     
